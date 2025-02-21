@@ -1,6 +1,7 @@
 <?php
 // tests/Pest.php
 
+use PHPUnit\Framework\Assert;
 use ProcessWire\ProcessWire;
 
 
@@ -48,6 +49,83 @@ require_once $rootPath . '/index.php';
 expect()->extend('toBeProcessWirePage', function () {
     return $this->toBeInstanceOf(\ProcessWire\Page::class);
 });
+
+expect()->extend('toContainText', function (string $text, bool $caseSensitive = true) {
+    $pageContent = trim(strip_tags($this->value));
+    
+    if (!$caseSensitive) {
+        $pageContent = strtolower($pageContent);
+        $text = strtolower($text);
+    }
+    
+    Assert::assertStringContainsString(
+        $text,
+        $pageContent,
+        "Failed asserting that page content contains '$text'"
+    );
+    
+    return $this;
+});
+
+expect()->extend('toContainHtml', function (string $html) {
+    Assert::assertStringContainsString(
+        $html,
+        $this->value,
+        "Failed asserting that page content contains HTML '$html'"
+    );
+    
+    return $this;
+});
+
+expect()->extend('toContainTextInOrder', function (array $texts, bool $caseSensitive = true) {
+    $pageContent = trim(strip_tags($this->value));
+    
+    if (!$caseSensitive) {
+        $pageContent = strtolower($pageContent);
+        $texts = array_map('strtolower', $texts);
+    }
+    
+    $position = 0;
+    foreach ($texts as $text) {
+        $currentPosition = strpos($pageContent, $text, $position);
+        
+        Assert::assertNotFalse(
+            $currentPosition,
+            "Failed asserting that page content contains '$text'"
+        );
+        
+        Assert::assertGreaterThanOrEqual(
+            $position,
+            $currentPosition,
+            sprintf(
+                "Failed asserting that '%s' comes after '%s'",
+                $text,
+                $texts[array_search($text, $texts) - 1] ?? 'start'
+            )
+        );
+        
+        $position = $currentPosition + strlen($text);
+    }
+    
+    return $this;
+});
+
+// Helper function to get rendered page content
+function getPageContent(\ProcessWire\Page $page): string {
+    // Store current page
+    $currentPage = wire('page');
+    
+    // Set page we want to render
+    wire('page', $page);
+    
+    // Render the page
+    $content = $page->render();
+    
+    // Restore original page
+    wire('page', $currentPage);
+    
+    return $content;
+}
 
 
 /*
