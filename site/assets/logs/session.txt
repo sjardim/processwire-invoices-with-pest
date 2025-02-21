@@ -1,0 +1,1 @@
+2025-02-21 12:30:10	sjardim	http://processwire-invoices.test/admin/login/	Successful login for 'sjardim'

@@ -1,0 +1,31 @@
+{
+  "name": "processwire/processwire",
+  "type": "library",
+  "description": "ProcessWire CMS/CMF",
+  "keywords": [ "processwire", "cms","cmf", "content management system" ],
+  "license": "MPL-2.0",
+  "homepage": "https://processwire.com",
+  "authors": [
+    {
+      "name": "Ryan Cramer",
+      "email": "ryan@processwire.com",
+      "homepage": "https://processwire.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "ext-gd": "*"
+  },
+  "autoload": {
+    "files": [ "wire/core/ProcessWire.php" ]
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.7"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
