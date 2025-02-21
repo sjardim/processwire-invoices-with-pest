@@ -44,7 +44,7 @@ if(input()->urlSegmentStr === 'email') {
 			<h4><?=_('From')?></h4>
 			<p>
 				<?=$settings->subtitle?><br />
-				<?=nl2br($settings->address)?>
+				<?=nl2br($settings->address ?? '')?>
 				<?php if($settings->website) echo "<br /><a href='$settings->website'>$settings->website</a>";?>
 			</p>
 		</div>
@@ -52,7 +52,7 @@ if(input()->urlSegmentStr === 'email') {
 			<h4><?=_('Billed to')?></h4>
 			<p>
 				<?=$client->title?><br />
-				<?=nl2br($client->address)?>
+				<?=nl2br($client->address ?? '')?>
 				<?php if($client->website) echo "<br /><a href='$client->website'>$client->website</a>";?>
 			</p>
 		</div>

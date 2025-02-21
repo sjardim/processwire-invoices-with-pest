@@ -158,12 +158,12 @@ $emailTemplate->start(); // start recording HTML output
 				<tr>
 					<td class="meta" width="50%">
 						<?=$settings->subtitle?><br />
-						<?=nl2br($settings->address)?>
+						<?=nl2br($settings->address ?? '')?>
 						<?php if($settings->website) echo "<br /><a class='link' href='$settings->website'>$settings->website</a>";?>
 					</td>
 					<td class="meta" width="50%">
 						<?=$client->title?><br />
-						<?=nl2br($client->address)?>
+						<?=nl2br($client->address ?? '')?>
 						<?php if($client->website) echo "<br /><a class='link' href='$client->website'>$client->website</a>";?>
 					</td>
 				</tr>	
