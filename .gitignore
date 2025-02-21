@@ -1,3 +1,7 @@
+/site/assets/backups
+/site/assets/cache
+/site/assets/logs
+/site/assets/sessions
 /node_modules
 /vendor
 .env
