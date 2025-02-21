@@ -46,12 +46,30 @@ function cleanup($page) {
 
 beforeEach(function() {
     $this->invoice = null;
+
+    // Get the admin user (ID 41 is the default admin user created during install)
+    $admin = pages()->get("id=41");
+    if (!$admin->id) {
+        // Fallback to finding admin by name/role if ID is different
+        $admin = pages()->get("template=user, name=admin");
+    }
+    
+    // Store the current user so we can restore it later
+    $this->previousUser = wire('user');
+    
+    // Log in as admin
+    if($admin->isSuperuser()) {
+        wire('users')->setCurrentUser($admin);
+    }
 });
 
 afterEach(function() {
+
     if (isset($this->invoice) && $this->invoice) {
         cleanup($this->invoice);
     }
+
+  
 });
 
 test('getSubtotal calculates correct invoice subtotal', function() {
@@ -178,11 +196,11 @@ test('getDueDate calculates the correct due date', function() {
     $invoice->date = $invoice_date;
     $invoice->save();
     
-    $days = createInvoiceDayPage(30);
+    $days = createInvoiceDayPage(45);
     $invoice->invoice_days = $days;
     $invoice->save();
     
-    $expected_due_date = $invoice_date + (30 * 86400);
+    $expected_due_date = $invoice_date + (45 * 86400);
     expect($invoice->getDueDate())->toBe($expected_due_date);
     
     // Test zero days
@@ -193,6 +211,8 @@ test('getDueDate calculates the correct due date', function() {
     expect($invoice->getDueDate(true))->toBe(_('Upon receipt'));
     
     cleanup($invoice);
+    cleanup($days);
+    cleanup($zeroDays);    
 });
 
 test('isPastDue identifies past due unpaid invoices', function() {
@@ -201,7 +221,7 @@ test('isPastDue identifies past due unpaid invoices', function() {
     $invoice->date = time() - (40 * 86400);
     $invoice->save();
     
-    $days = createInvoiceDayPage(30);
+    $days = createInvoiceDayPage(15);
     $invoice->invoice_days = $days;
     $invoice->save();
     
@@ -216,6 +236,7 @@ test('isPastDue identifies past due unpaid invoices', function() {
     expect($invoice->isPastDue())->toBeFalse();
     
     cleanup($invoice);
+    cleanup($days);
 });
 
 test('getDaysRemaining calculates correct days remaining', function() {
@@ -248,6 +269,7 @@ test('getDaysRemaining calculates correct days remaining', function() {
     expect($invoice->getDaysRemaining())->toBe(0);
     
     cleanup($invoice);
+    cleanup($days);
 });
 
 test('getPaidInDays returns false for unpaid invoices', function() {
